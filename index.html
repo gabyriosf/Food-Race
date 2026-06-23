@@ -2,55 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
     <title>Burger vs Hot Dog Voting</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            overflow: hidden;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 0;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .container {
             width: 100%;
+            height: 100%;
             max-width: 800px;
+            max-height: 100vh;
             background: white;
-            border-radius: 30px;
-            padding: 40px 20px;
+            border-radius: 0;
+            padding: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 600px) {
+            .container {
+                border-radius: 30px;
+                padding: 40px 20px;
+                max-height: 90vh;
+            }
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            flex-shrink: 0;
         }
 
         h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             color: #333;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .subtitle {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .total-votes {
-            font-size: 1.1em;
+            font-size: 1em;
             color: #667eea;
             font-weight: bold;
         }
@@ -58,55 +86,94 @@
         .voting-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+            .voting-section {
+                gap: 12px;
+                margin-bottom: 20px;
+            }
         }
 
         .vote-card {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
         }
 
         .vote-icon {
-            font-size: 80px;
-            margin-bottom: 10px;
+            font-size: 50px;
+            margin-bottom: 5px;
             animation: bounce 0.6s ease-in-out infinite;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (min-width: 600px) {
+            .vote-icon {
+                font-size: 70px;
+            }
         }
 
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
 
         .vote-button {
             width: 100%;
-            padding: 40px 20px;
-            font-size: 1.8em;
+            padding: 25px 15px;
+            font-size: 1.4em;
             font-weight: bold;
             border: none;
-            border-radius: 20px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
             color: white;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             user-select: none;
             -webkit-user-select: none;
             -webkit-touch-callout: none;
-            min-height: 100px;
+            min-height: 70px;
+            font-family: inherit;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
         .vote-button:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .vote-button:disabled {
+            opacity: 0.6;
+        }
+
+        @media (min-width: 600px) {
+            .vote-button {
+                padding: 35px 20px;
+                font-size: 1.6em;
+                min-height: 90px;
+            }
         }
 
         .burger-button {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
-        .burger-button:hover {
+        .burger-button:active {
             background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
         }
 
@@ -114,49 +181,50 @@
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
-        .hotdog-button:hover {
+        .hotdog-button:active {
             background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
         }
 
         .vote-count {
-            font-size: 1.5em;
+            font-size: 1.3em;
             font-weight: bold;
             color: #333;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .progress-container {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 12px;
         }
 
         .progress-label {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
 
         .progress-bar-bg {
             width: 100%;
-            height: 25px;
+            height: 20px;
             background: #e0e0e0;
-            border-radius: 15px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .progress-bar {
             height: 100%;
-            border-radius: 15px;
-            transition: width 0.5s ease;
+            border-radius: 12px;
+            transition: width 0.4s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 0.85em;
+            font-size: 0.7em;
+            min-width: 30px;
         }
 
         .burger-progress {
@@ -169,76 +237,68 @@
 
         .stats-section {
             background: #f5f5f5;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 15px;
             text-align: center;
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        @media (min-width: 600px) {
+            .stats-section {
+                padding: 25px;
+                border-radius: 20px;
+            }
         }
 
         .stats-title {
-            font-size: 1.3em;
+            font-size: 1.2em;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: bold;
         }
 
         .stat-item {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .stat-label {
             color: #666;
-            font-size: 0.95em;
-            margin-bottom: 5px;
+            font-size: 0.9em;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #667eea;
         }
 
         .reset-button {
-            margin-top: 30px;
-            padding: 15px 30px;
+            margin-top: 15px;
+            padding: 12px 25px;
             background: #999;
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 1em;
+            border-radius: 12px;
+            font-size: 0.95em;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .reset-button:hover {
-            background: #777;
+            transition: all 0.15s ease;
+            font-family: inherit;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .reset-button:active {
-            transform: scale(0.95);
+            background: #777;
+            transform: scale(0.92);
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 25px 15px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .vote-icon {
-                font-size: 60px;
-            }
-
-            .vote-button {
-                padding: 30px 15px;
-                font-size: 1.5em;
-                min-height: 80px;
-            }
-
-            .voting-section {
-                gap: 20px;
-            }
+        .reset-button:disabled {
+            opacity: 0.6;
         }
 
         .toast {
@@ -246,13 +306,15 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #333;
+            background: rgba(51, 51, 51, 0.95);
             color: white;
-            padding: 20px 40px;
-            border-radius: 15px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1em;
             animation: slideUp 0.3s ease;
-            z-index: 1000;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            pointer-events: none;
         }
 
         @keyframes slideUp {
@@ -263,6 +325,13 @@
             to {
                 opacity: 1;
                 transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @supports (padding: max(0px)) {
+            .container {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+                padding-top: max(20px, env(safe-area-inset-top));
             }
         }
     </style>
@@ -279,11 +348,11 @@
             <!-- Burger Card -->
             <div class="vote-card">
                 <div class="vote-icon">🍔</div>
-                <button class="vote-button burger-button" onclick="vote('burger')">
-                    VOTE BURGER
+                <button class="vote-button burger-button" id="burgerBtn" type="button">
+                    BURGER
                 </button>
                 <div class="vote-count">
-                    <span id="burgerCount">0</span> votes
+                    <span id="burgerCount">0</span>
                 </div>
                 <div class="progress-container">
                     <div class="progress-label">
@@ -300,11 +369,11 @@
             <!-- Hot Dog Card -->
             <div class="vote-card">
                 <div class="vote-icon">🌭</div>
-                <button class="vote-button hotdog-button" onclick="vote('hotdog')">
-                    VOTE HOT DOG
+                <button class="vote-button hotdog-button" id="hotdogBtn" type="button">
+                    HOT DOG
                 </button>
                 <div class="vote-count">
-                    <span id="hotdogCount">0</span> votes
+                    <span id="hotdogCount">0</span>
                 </div>
                 <div class="progress-container">
                     <div class="progress-label">
@@ -330,27 +399,78 @@
                 <div class="stat-label">Vote Difference</div>
                 <div class="stat-value" id="difference">0</div>
             </div>
-            <button class="reset-button" onclick="resetVotes()">Reset Votes</button>
+            <button class="reset-button" id="resetBtn" type="button">Reset Votes</button>
         </div>
     </div>
 
     <script>
-        // Load votes from localStorage
+        // Touch-optimized voting application
         let votes = {
             burger: 0,
             hotdog: 0
         };
 
+        const burgerBtn = document.getElementById('burgerBtn');
+        const hotdogBtn = document.getElementById('hotdogBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Prevent default touch behaviors
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.classList.contains('vote-button') || 
+                e.target.classList.contains('reset-button')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Touch event handlers
+        burgerBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            vote('burger');
+        }, { passive: false });
+
+        burgerBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            vote('burger');
+        });
+
+        hotdogBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            vote('hotdog');
+        }, { passive: false });
+
+        hotdogBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            vote('hotdog');
+        });
+
+        resetBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            resetVotes();
+        }, { passive: false });
+
+        resetBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            resetVotes();
+        });
+
         function loadVotes() {
-            const saved = localStorage.getItem('votes');
-            if (saved) {
-                votes = JSON.parse(saved);
-                updateDisplay();
+            try {
+                const saved = localStorage.getItem('votes');
+                if (saved) {
+                    votes = JSON.parse(saved);
+                    updateDisplay();
+                }
+            } catch (e) {
+                console.log('Could not load votes');
             }
         }
 
         function saveVotes() {
-            localStorage.setItem('votes', JSON.stringify(votes));
+            try {
+                localStorage.setItem('votes', JSON.stringify(votes));
+            } catch (e) {
+                console.log('Could not save votes');
+            }
         }
 
         function vote(option) {
@@ -359,9 +479,9 @@
             updateDisplay();
             showToast(option === 'burger' ? '🍔 Burger!' : '🌭 Hot Dog!');
             
-            // Haptic feedback if available
+            // Haptic feedback for mobile
             if (navigator.vibrate) {
-                navigator.vibrate(50);
+                navigator.vibrate([50, 30, 50]);
             }
         }
 
@@ -371,8 +491,8 @@
             const hotdogPercent = total === 0 ? 0 : Math.round((votes.hotdog / total) * 100);
 
             // Update counts
-            document.getElementById('burgerCount').textContent = votes.burger;
-            document.getElementById('hotdogCount').textContent = votes.hotdog;
+            document.getElementById('burgerCount').textContent = votes.burger + ' votes';
+            document.getElementById('hotdogCount').textContent = votes.hotdog + ' votes';
             document.getElementById('totalVotes').textContent = total;
 
             // Update percentages
@@ -388,10 +508,10 @@
             let difference = 0;
 
             if (votes.burger > votes.hotdog) {
-                leading = '🍔 Burger is winning!';
+                leading = '🍔 Burger wins!';
                 difference = votes.burger - votes.hotdog;
             } else if (votes.hotdog > votes.burger) {
-                leading = '🌭 Hot Dog is winning!';
+                leading = '🌭 Hot Dog wins!';
                 difference = votes.hotdog - votes.burger;
             } else if (total > 0) {
                 leading = '🤝 It\'s a tie!';
@@ -403,15 +523,20 @@
         }
 
         function resetVotes() {
-            if (confirm('Are you sure you want to reset all votes?')) {
+            if (confirm('Reset all votes?')) {
                 votes = { burger: 0, hotdog: 0 };
                 saveVotes();
                 updateDisplay();
-                showToast('🔄 Votes reset!');
+                showToast('🔄 Reset!');
             }
         }
 
         function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) {
+                existing.remove();
+            }
+
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.textContent = message;
@@ -422,20 +547,28 @@
             }, 2000);
         }
 
-        // Auto-update every 2 seconds (for multi-device support)
-        setInterval(() => {
-            loadVotes();
-        }, 2000);
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
 
         // Initial load
         loadVotes();
 
-        // Prevent double-tap zoom on buttons
-        document.addEventListener('touchend', function(e) {
-            if (e.target.classList.contains('vote-button')) {
-                e.preventDefault();
-            }
-        }, false);
+        // Prevent accidental scrolling
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Auto-update from storage
+        setInterval(() => {
+            loadVotes();
+        }, 1000);
     </script>
 </body>
 </html>
