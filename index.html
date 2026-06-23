@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Burger vs Hot Dog Voting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 30px;
+            padding: 40px 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .total-votes {
+            font-size: 1.1em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .voting-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .vote-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .vote-icon {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .vote-button {
+            width: 100%;
+            padding: 40px 20px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            min-height: 100px;
+        }
+
+        .vote-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .burger-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .burger-button:hover {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+        }
+
+        .hotdog-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .hotdog-button:hover {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+        }
+
+        .vote-count {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .progress-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .burger-progress {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .hotdog-progress {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stats-section {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stats-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .stat-item {
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .reset-button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-button:hover {
+            background: #777;
+        }
+
+        .reset-button:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .vote-icon {
+                font-size: 60px;
+            }
+
+            .vote-button {
+                padding: 30px 15px;
+                font-size: 1.5em;
+                min-height: 80px;
+            }
+
+            .voting-section {
+                gap: 20px;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            animation: slideUp 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗳️ Burger vs Hot Dog</h1>
+            <p class="subtitle">What's your favorite?</p>
+            <p class="total-votes">Total Votes: <span id="totalVotes">0</span></p>
+        </div>
+
+        <div class="voting-section">
+            <!-- Burger Card -->
+            <div class="vote-card">
+                <div class="vote-icon">🍔</div>
+                <button class="vote-button burger-button" onclick="vote('burger')">
+                    VOTE BURGER
+                </button>
+                <div class="vote-count">
+                    <span id="burgerCount">0</span> votes
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Burger</span>
+                        <span id="burgerPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar burger-progress" id="burgerBar" style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hot Dog Card -->
+            <div class="vote-card">
+                <div class="vote-icon">🌭</div>
+                <button class="vote-button hotdog-button" onclick="vote('hotdog')">
+                    VOTE HOT DOG
+                </button>
+                <div class="vote-count">
+                    <span id="hotdogCount">0</span> votes
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Hot Dog</span>
+                        <span id="hotdogPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar hotdog-progress" id="hotdogBar" style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stats-title">📊 Results</div>
+            <div class="stat-item">
+                <div class="stat-label">Leading</div>
+                <div class="stat-value" id="leading">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Vote Difference</div>
+                <div class="stat-value" id="difference">0</div>
+            </div>
+            <button class="reset-button" onclick="resetVotes()">Reset Votes</button>
+        </div>
+    </div>
+
+    <script>
+        // Load votes from localStorage
+        let votes = {
+            burger: 0,
+            hotdog: 0
+        };
+
+        function loadVotes() {
+            const saved = localStorage.getItem('votes');
+            if (saved) {
+                votes = JSON.parse(saved);
+                updateDisplay();
+            }
+        }
+
+        function saveVotes() {
+            localStorage.setItem('votes', JSON.stringify(votes));
+        }
+
+        function vote(option) {
+            votes[option]++;
+            saveVotes();
+            updateDisplay();
+            showToast(option === 'burger' ? '🍔 Burger!' : '🌭 Hot Dog!');
+            
+            // Haptic feedback if available
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function updateDisplay() {
+            const total = votes.burger + votes.hotdog;
+            const burgerPercent = total === 0 ? 0 : Math.round((votes.burger / total) * 100);
+            const hotdogPercent = total === 0 ? 0 : Math.round((votes.hotdog / total) * 100);
+
+            // Update counts
+            document.getElementById('burgerCount').textContent = votes.burger;
+            document.getElementById('hotdogCount').textContent = votes.hotdog;
+            document.getElementById('totalVotes').textContent = total;
+
+            // Update percentages
+            document.getElementById('burgerPercent').textContent = burgerPercent + '%';
+            document.getElementById('hotdogPercent').textContent = hotdogPercent + '%';
+
+            // Update progress bars
+            document.getElementById('burgerBar').style.width = burgerPercent + '%';
+            document.getElementById('hotdogBar').style.width = hotdogPercent + '%';
+
+            // Update stats
+            let leading = '-';
+            let difference = 0;
+
+            if (votes.burger > votes.hotdog) {
+                leading = '🍔 Burger is winning!';
+                difference = votes.burger - votes.hotdog;
+            } else if (votes.hotdog > votes.burger) {
+                leading = '🌭 Hot Dog is winning!';
+                difference = votes.hotdog - votes.burger;
+            } else if (total > 0) {
+                leading = '🤝 It\'s a tie!';
+                difference = 0;
+            }
+
+            document.getElementById('leading').textContent = leading;
+            document.getElementById('difference').textContent = difference;
+        }
+
+        function resetVotes() {
+            if (confirm('Are you sure you want to reset all votes?')) {
+                votes = { burger: 0, hotdog: 0 };
+                saveVotes();
+                updateDisplay();
+                showToast('🔄 Votes reset!');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        // Auto-update every 2 seconds (for multi-device support)
+        setInterval(() => {
+            loadVotes();
+        }, 2000);
+
+        // Initial load
+        loadVotes();
+
+        // Prevent double-tap zoom on buttons
+        document.addEventListener('touchend', function(e) {
+            if (e.target.classList.contains('vote-button')) {
+                e.preventDefault();
+            }
+        }, false);
+    </script>
+</body>
+</html>
